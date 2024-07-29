@@ -1,4 +1,4 @@
-const users = require("../src/model/users")
+const {users} = require("../src/model/users")
 //Middleware to validate data
 const validateData = (req, res, next)=>{
     const {username, email, password} = req.body

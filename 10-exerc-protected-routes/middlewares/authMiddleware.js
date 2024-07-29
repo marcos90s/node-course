@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
-const users = require("../src/model/users")
-const { secretKey } = require('../src/routes/auth')
+const {users} = require("../src/model/users")
+const { JWT_SECRET } = require('../config/environment')
 
 const authMiddleware = (req, res, next)=>{
     const authHeader = req.headers.authorization
@@ -10,7 +10,7 @@ const authMiddleware = (req, res, next)=>{
     const token = authHeader.split(' ')[1]
     console.log("token: "+token)
     try{
-        const verifiedToken = jwt.verify(token, secretKey)
+        const verifiedToken = jwt.verify(token, JWT_SECRET)
         const user = users.find(user => user.email === verifiedToken.email)
         if(!user){
             return res.status(401).json({message: 'Invalid User'})

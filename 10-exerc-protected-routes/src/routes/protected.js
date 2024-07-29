@@ -1,41 +1,16 @@
 const express = require('express')
 const protectedMiddleware = require('../../middlewares/protectedMiddleware')
 const users = require('../model/users')
+const protectedController = require('../../controllers/protectedController')
 
 const protectedRouter = express.Router()
 //GET/protected/users
-protectedRouter.get('/users', protectedMiddleware,(req, res)=>{
-    res.status(200).json(users)
-})
+protectedRouter.get('/users', protectedMiddleware,protectedController.getAll)
 //GET/protected/users/:id
-protectedRouter.get('/users/:id', protectedMiddleware,(req, res)=>{
-    const {id} = req.params
-    const user = users.find(user => user.id === +id)
-    if(!user){
-        return res.status(404).json({message: 'User not found'})
-    }
-    res.status(200).json(user)
-})
+protectedRouter.get('/users/:id', protectedMiddleware, protectedController.getById)
 //PUT/protected/users/:id
-protectedRouter.put('/users/:id',protectedMiddleware, (req,res)=>{
-    const {id} = req.params
-    const user = users.find(user => user.id === +id)
-    if(!user){
-        return res.status(404).json({message: 'User not found'})
-    }
-    user.role = 'admin'
-    res.status(200).json(`User role changed to admin: ${user}`)
-})
+protectedRouter.put('/users/:id',protectedMiddleware, protectedController.changeUserRole)
 //DELETE/protected/users/:id
-protectedRouter.delete('/users/:id', protectedMiddleware, (req, res)=>{
-    const {id} = req.params
-    const userIndex = users.findIndex(user => user.id === +id)
-    if(userIndex === -1){
-        return res.status(404).json({message: 'User not found'})
-    }
-    users.splice(userIndex, 1)
-    res.status(204).end()
-})
+protectedRouter.delete('/users/:id', protectedMiddleware, protectedController.deleteUser)
 
-
-module.exports = protectedRouter
+module.exports = protectedRouter 

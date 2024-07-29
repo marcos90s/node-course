@@ -1,26 +1,12 @@
 const express = require('express')
-const jwt = require('jsonwebtoken')
-const users = require('../model/users')
 const {validateData, validateLogin} = require('../../middlewares/validationMidawares')
-
+const authControler = require('../../controllers/authController')
 
 const authRouter = express.Router()
-const secretKey = 'Jaming'
+
 //Register route
-authRouter.post('/register',validateData,(req, res)=>{
-    const {username, email, password} = req.body
-    const user = {id: Math.floor(Math.random()*99999),username, email, password, role:'Common'}
-    users.push(user)
-    res.status(201).json(user)
-})
+authRouter.post('/register',validateData, authControler.register)
 //Login route
-authRouter.post('/login', validateLogin, (req, res)=>{
-    const {email} = req.body
-    const user = users.find(user => user.email === email)
-    const payload = { email }
-    const token = jwt.sign(payload, secretKey, {expiresIn: '1h'})
-    res.status(200).json({message: `Welcome, ${user.username}
-Here is your token: ${token}`})
-})
+authRouter.post('/login', validateLogin, authControler.login)
  
-module.exports = {authRouter, secretKey}
+module.exports = authRouter
